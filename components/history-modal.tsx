@@ -112,8 +112,8 @@ export function HistoryModal({ open, onOpenChange }: HistoryModalProps) {
                     Hapus Semua
                   </Button>
                 </div>
-                {calculations.map((calc) => (
-                  <div key={calc.id} className="bg-muted/50 rounded-lg p-4">
+                {calculations.map((calc, idx) => (
+                  <div key={`${calc.id}-${idx}`} className="bg-muted/50 rounded-lg p-4">
                     <div className="flex items-start justify-between">
                       <div>
                         <h4 className="font-semibold">{calc.productName}</h4>
@@ -173,8 +173,8 @@ export function HistoryModal({ open, onOpenChange }: HistoryModalProps) {
                     Hapus Semua
                   </Button>
                 </div>
-                {derivedCalculations.map((calc) => (
-                  <div key={calc.id} className="bg-muted/50 rounded-lg p-4">
+                {derivedCalculations.map((calc, idx) => (
+                  <div key={`${calc.id}-${idx}`} className="bg-muted/50 rounded-lg p-4">
                     <div className="flex items-start justify-between">
                       <div>
                         <h4 className="font-semibold">{calc.businessName}</h4>

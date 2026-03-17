@@ -5,7 +5,7 @@ const DERIVED_STORAGE_KEY = 'derived-calculations';
 
 export function saveCalculation(calculation: HPPCalculation): void {
   if (typeof window === 'undefined') return;
-  const existing = getCalculations();
+  const existing = getCalculations().filter((c) => c.id !== calculation.id);
   existing.unshift(calculation);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(existing.slice(0, 50)));
 }
@@ -33,7 +33,7 @@ export function deleteAllCalculations(): void {
 
 export function saveDerivedCalculation(calculation: DerivedProductCalculation): void {
   if (typeof window === 'undefined') return;
-  const existing = getDerivedCalculations();
+  const existing = getDerivedCalculations().filter((c) => c.id !== calculation.id);
   existing.unshift(calculation);
   localStorage.setItem(DERIVED_STORAGE_KEY, JSON.stringify(existing.slice(0, 50)));
 }

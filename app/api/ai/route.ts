@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const { action, data } = await request.json();
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     if (action === "price-recommendations") {
       const { productName, category, hpp, businessMode } = data;
@@ -203,6 +203,16 @@ Gunakan data realistis untuk bisnis kecil-menengah di Indonesia.`;
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (error) {
     console.error("AI API Error:", error);
-    return NextResponse.json({ error: "AI service error" }, { status: 500 });
+    const errMsg = error instanceof Error ? error.message : String(error);
+    if (errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("Too Many Requests")) {
+      return NextResponse.json(
+        { error: "Quota API habis. Coba lagi dalam beberapa menit." },
+        { status: 429 }
+      );
+    }
+    return NextResponse.json(
+      { error: "Terjadi kesalahan pada layanan AI. Silakan coba lagi." },
+      { status: 500 }
+    );
   }
 }
