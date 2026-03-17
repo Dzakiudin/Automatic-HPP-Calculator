@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Settings, Key } from "lucide-react";
+import { Settings, Key, Sun, Moon, Monitor } from "lucide-react";
 
 interface SettingsModalProps {
   open: boolean;
@@ -21,6 +22,7 @@ interface SettingsModalProps {
 
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const [apiKey, setApiKey] = useState("");
+  const { theme, setTheme } = useTheme();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -103,6 +105,46 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               .
             </p>
           </div>
+        </div>
+
+        {/* Theme Toggle */}
+        <div className="space-y-3 border-t pt-4">
+          <Label className="flex items-center gap-2">
+            <Sun className="h-4 w-4" />
+            Tema Aplikasi
+          </Label>
+          <div className="grid grid-cols-3 gap-2">
+            <Button
+              variant={theme === "light" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTheme("light")}
+              className="flex items-center gap-1.5"
+            >
+              <Sun className="h-3.5 w-3.5" />
+              Light
+            </Button>
+            <Button
+              variant={theme === "dark" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTheme("dark")}
+              className="flex items-center gap-1.5"
+            >
+              <Moon className="h-3.5 w-3.5" />
+              Dark
+            </Button>
+            <Button
+              variant={theme === "system" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTheme("system")}
+              className="flex items-center gap-1.5"
+            >
+              <Monitor className="h-3.5 w-3.5" />
+              System
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Pilih tema tampilan sesuai preferensi Anda.
+          </p>
         </div>
 
         <div className="flex items-center gap-3 w-full">
