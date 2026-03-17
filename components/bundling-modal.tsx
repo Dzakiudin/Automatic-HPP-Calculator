@@ -85,38 +85,58 @@ export function BundlingModal({ open, onOpenChange, onGenerateRecommendation }: 
           <div className="space-y-4">
             <div className="space-y-3">
               {products.map((product, index) => (
-                <div key={product.id} className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground w-6">{index + 1}.</span>
-                  <Input
-                    placeholder="Nama Produk"
-                    value={product.name}
-                    onChange={(e) => updateProduct(product.id, "name", e.target.value)}
-                    className="flex-1"
-                  />
-                  <Input
-                    type="number"
-                    placeholder="Harga Normal"
-                    value={product.normalPrice || ""}
-                    onChange={(e) => updateProduct(product.id, "normalPrice", Number(e.target.value))}
-                    className="w-32"
-                  />
-                  <Input
-                    type="number"
-                    placeholder="HPP"
-                    value={product.hpp || ""}
-                    onChange={(e) => updateProduct(product.id, "hpp", Number(e.target.value))}
-                    className="w-28"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeProduct(product.id)}
-                    disabled={products.length === 1}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+                <div key={product.id} className="p-3 border rounded-lg space-y-3 bg-muted/30 relative">
+                  <div className="flex items-center justify-between border-b pb-2">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Produk #{index + 1}
+                    </span>
+                    {products.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeProduct(product.id)}
+                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 -mr-2"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold text-muted-foreground uppercase ml-1">Nama Produk</label>
+                      <Input
+                        placeholder="Contoh: Kopi Susu"
+                        value={product.name}
+                        onChange={(e) => updateProduct(product.id, "name", e.target.value)}
+                        className="h-10 bg-background"
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-semibold text-muted-foreground uppercase ml-1">Harga Normal</label>
+                        <Input
+                          type="number"
+                          placeholder="Rp"
+                          value={product.normalPrice || ""}
+                          onChange={(e) => updateProduct(product.id, "normalPrice", Number(e.target.value))}
+                          className="h-10 bg-background"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-semibold text-muted-foreground uppercase ml-1">HPP</label>
+                        <Input
+                          type="number"
+                          placeholder="Rp"
+                          value={product.hpp || ""}
+                          onChange={(e) => updateProduct(product.id, "hpp", Number(e.target.value))}
+                          className="h-10 bg-background"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

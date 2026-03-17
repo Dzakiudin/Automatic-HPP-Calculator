@@ -1,5 +1,5 @@
 import React from "react"
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -9,10 +9,24 @@ import './globals.css'
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
+
 export const metadata: Metadata = {
   title: 'Kalkulator HPP Otomatis - Asisten Bisnis Cerdas',
   description: 'Kalkulator HPP cerdas dengan AI untuk menghitung harga pokok produksi, rekomendasi harga jual, dan proyeksi keuntungan',
   generator: 'v0.app',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'HPP AI',
+  },
   icons: {
     icon: [
       {
@@ -32,6 +46,9 @@ export const metadata: Metadata = {
   },
 }
 
+import { TopBar } from '@/components/top-bar'
+import { BottomNav } from '@/components/bottom-nav'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -39,14 +56,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <body className={`${geist.variable} ${geistMono.variable} font-sans antialiased`}>
+      <body className={`${geist.variable} ${geistMono.variable} font-sans antialiased bg-background`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <div className="flex flex-col min-h-screen">
+            <TopBar />
+            <main className="flex-1 pb-20">
+              {children}
+            </main>
+            <BottomNav />
+          </div>
           <Toaster />
         </ThemeProvider>
         <Analytics />

@@ -53,14 +53,14 @@ export function VariableCostInput({ costs, onChange }: VariableCostInputProps) {
               placeholder="Harga"
               value={cost.amount || ""}
               onChange={(e) => updateCost(cost.id, "amount", Number(e.target.value))}
-              className="w-32"
+              className="w-24 sm:w-32"
             />
             <Button
               type="button"
               variant="ghost"
-              size="icon"
+              size="sm"
               onClick={() => removeCost(cost.id)}
-              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -119,11 +119,11 @@ export function FixedCostInput({ costs, targetSales, onChange }: FixedCostInputP
         <p className="text-xs text-muted-foreground">Alokasikan sebagian dari total biaya bulanan ke setiap produk yang terjual.</p>
       </div>
       <div className="space-y-3">
-        <div className="grid grid-cols-[1fr,1fr,1fr,auto] gap-2 text-xs font-medium text-muted-foreground px-1">
+        <div className="grid grid-cols-[1fr,1fr,1fr,32px] gap-2 text-xs font-medium text-muted-foreground px-1">
           <span>Nama Biaya</span>
           <span>Total Biaya (per bulan)</span>
           <span>Alokasi per Produk (Rp)</span>
-          <span className="w-9"></span>
+          <span className="w-8"></span>
         </div>
         {costs.map((cost) => {
           const suggested = getSuggestedAllocation(cost.monthlyAmount);
@@ -153,9 +153,9 @@ export function FixedCostInput({ costs, targetSales, onChange }: FixedCostInputP
                 <Button
                   type="button"
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   onClick={() => removeCost(cost.id)}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>

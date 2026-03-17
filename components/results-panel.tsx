@@ -52,9 +52,9 @@ export function ResultsPanel({
 
   return (
     <div className="bg-card rounded-xl border shadow-sm">
-      <div className="p-4 border-b flex items-center justify-between">
+      <div className="p-4 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h2 className="text-lg font-semibold text-foreground">Hasil Perhitungan</h2>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
           <Button
             variant="ghost"
             size="sm"
@@ -150,7 +150,7 @@ export function ResultsPanel({
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label className="text-sm">Target Laba Bersih / Bulan</Label>
                       <Input

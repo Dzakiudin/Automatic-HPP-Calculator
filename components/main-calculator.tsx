@@ -16,8 +16,8 @@ import { BusinessModeSelector } from "./business-mode-selector";
 import { VariableCostInput, FixedCostInput } from "./cost-input";
 import { ResultsPanel } from "./results-panel";
 import { BundlingModal } from "./bundling-modal";
-import { HistoryModal } from "./history-modal";
 import { saveCalculation, formatRupiah } from "@/lib/store";
+import { useRouter } from "next/navigation";
 import type {
   BusinessMode,
   CalculationMode,
@@ -60,6 +60,7 @@ const defaultFixedCosts: FixedCost[] = [
 ];
 
 export function MainCalculator() {
+  const router = useRouter();
   const { toast } = useToast();
   
   // Form state
@@ -176,27 +177,33 @@ export function MainCalculator() {
       // Get AI recommendations
       setIsLoadingAI(true);
       try {
-        const response = await fetch("/api/ai", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "price-recommendations",
-            data: {
-              productName,
-              category,
-              hpp: hppPerProduct,
-              businessMode,
-            },
-          }),
-        });
+        const { getPriceRecommendationsClient } = await import("@/lib/ai-client");
+        const recommendationsArr = await getPriceRecommendationsClient(
+          productName,
+          category || "Lainnya",
+          hppPerProduct,
+          targetSalesPerMonth
+        );
 
-        if (response.ok) {
-          const recommendations = await response.json();
-          setAiRecommendations(recommendations);
-          setSelectedPrice(recommendations.standard.price);
+        if (recommendationsArr && recommendationsArr.length >= 3) {
+          const formattedRecs = {
+            competitive: recommendationsArr[0],
+            standard: recommendationsArr[1],
+            premium: recommendationsArr[2],
+          } as unknown as PriceRecommendation;
+
+          setAiRecommendations(formattedRecs);
+          setSelectedPrice(formattedRecs.standard.price);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("AI recommendations error:", error);
+        if (error?.message === "MISSING_API_KEY") {
+          toast({
+            title: "API Key Diperlukan",
+            description: "Silakan atur API Key Google Gemini Anda di menu Pengaturan.",
+            variant: "destructive",
+          });
+        }
       } finally {
         setIsLoadingAI(false);
       }
@@ -218,24 +225,40 @@ export function MainCalculator() {
 
   const handleBundleRecommendation = async (products: BundleProduct[]): Promise<BundleRecommendation | null> => {
     try {
+      const { getBundleRecommendationsClient } = await import("@/lib/ai-client");
+      const productName = products.length > 0 ? products[0].name : "Bundle";
       const totalHPP = products.reduce((sum, p) => sum + p.hpp, 0);
-      const totalNormalPrice = products.reduce((sum, p) => sum + p.normalPrice, 0);
 
-      const response = await fetch("/api/ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "bundle-recommendations",
-          data: { products, totalHPP, totalNormalPrice },
-        }),
-      });
-
-      if (response.ok) {
-        return await response.json();
+      const recommendation = await getBundleRecommendationsClient(productName, category || "Lainnya", totalHPP);
+      // Since ai-client returns BundleRecommendation[] (max 3), let's map it back to the expected BundleRecommendation single obj shape.
+      // Wait, let's check what BundleRecommendation actually expects. 
+      // It expects { economyPack, balancedPack, profitMaxPack }. The client prompt returns array.
+      // We will adjust the AI-client prompt or map it here. Let's map it.
+      
+      if (recommendation && recommendation.length >= 3) {
+        return {
+          economyPack: recommendation[0],
+          balancedPack: recommendation[1],
+          profitMaxPack: recommendation[2],
+        } as unknown as BundleRecommendation;
       }
       return null;
-    } catch (error) {
+
+    } catch (error: any) {
       console.error("Bundle recommendation error:", error);
+      if (error?.message === "MISSING_API_KEY") {
+        toast({
+          title: "API Key Diperlukan",
+          description: "Silakan atur API Key Google Gemini Anda di menu Pengaturan (ikon gear di pojok kanan atas).",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Gagal",
+          description: error?.message || "Gagal mendapatkan saran bundling.",
+          variant: "destructive",
+        });
+      }
       return null;
     }
   };
@@ -243,7 +266,7 @@ export function MainCalculator() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Input Section */}
-      <div className="bg-card rounded-xl border shadow-sm p-6 space-y-6">
+      <div className="bg-card rounded-xl border shadow-sm p-4 sm:p-6 space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-foreground">Input Data</h2>
           <Button
@@ -276,7 +299,7 @@ export function MainCalculator() {
         </Tabs>
 
         {/* Product Info */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Nama Produk</Label>
             <Input
@@ -330,20 +353,22 @@ export function MainCalculator() {
         />
 
         {/* Calculate Button */}
-        <Button
-          onClick={calculateHPP}
-          disabled={isLoading || !productName}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-        >
-          {isLoading ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-              Menghitung...
-            </>
-          ) : (
-            "Hitung HPP & Saran Harga"
-          )}
-        </Button>
+        <div className="sticky bottom-16 z-40 bg-card/80 backdrop-blur-sm -mx-6 px-6 pb-6 pt-2 lg:static lg:bg-transparent lg:p-0 lg:m-0">
+          <Button
+            onClick={calculateHPP}
+            disabled={isLoading || !productName}
+            className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg lg:shadow-none"
+          >
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                Menghitung...
+              </>
+            ) : (
+              "Hitung HPP & Saran Harga"
+            )}
+          </Button>
+        </div>
       </div>
 
       {/* Results Section */}
@@ -358,7 +383,7 @@ export function MainCalculator() {
         onTargetProfitChange={setTargetProfit}
         onSave={handleSave}
         onOpenBundling={() => setBundlingOpen(true)}
-        onOpenHistory={() => setHistoryOpen(true)}
+        onOpenHistory={() => router.push("/history")}
       />
 
       {/* Modals */}
@@ -367,7 +392,6 @@ export function MainCalculator() {
         onOpenChange={setBundlingOpen}
         onGenerateRecommendation={handleBundleRecommendation}
       />
-      <HistoryModal open={historyOpen} onOpenChange={setHistoryOpen} />
     </div>
   );
 }

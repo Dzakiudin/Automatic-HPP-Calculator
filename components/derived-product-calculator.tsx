@@ -98,7 +98,7 @@ export function DerivedProductCalculator({ onAIAssist }: DerivedProductCalculato
       });
       return;
     }
-    
+
     setIsAILoading(true);
     try {
       const suggestions = await onAIAssist(rawMaterial.name);
@@ -117,7 +117,7 @@ export function DerivedProductCalculator({ onAIAssist }: DerivedProductCalculato
 
   const calculateHPP = () => {
     setIsLoading(true);
-    
+
     setTimeout(() => {
       // Calculate total processing costs
       const totalProcessingPerBatch = processingCosts.reduce((sum, cost) => {
@@ -195,7 +195,7 @@ export function DerivedProductCalculator({ onAIAssist }: DerivedProductCalculato
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Input Section */}
-      <div className="bg-card rounded-xl border shadow-sm p-6 space-y-6">
+      <div className="bg-card rounded-xl border shadow-sm p-4 sm:p-6 space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-foreground">Input Data</h2>
           <Button
@@ -254,12 +254,12 @@ export function DerivedProductCalculator({ onAIAssist }: DerivedProductCalculato
               Input bahan baku utama yang akan diolah.
             </p>
           </div>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
             <Input
               placeholder="Kelapa Utuh"
               value={rawMaterial.name}
               onChange={(e) => setRawMaterial({ ...rawMaterial, name: e.target.value })}
-              className="col-span-1"
+              className="sm:col-span-1"
             />
             <Input
               type="number"
@@ -303,11 +303,11 @@ export function DerivedProductCalculator({ onAIAssist }: DerivedProductCalculato
             </p>
           </div>
           <div className="space-y-2">
-            <div className="grid grid-cols-[1fr,1fr,1fr,auto] gap-2 text-xs font-medium text-muted-foreground px-1">
+            <div className="grid grid-cols-[1fr,1fr,1fr,32px] gap-2 text-xs font-medium text-muted-foreground px-1">
               <span>Nama Biaya</span>
               <span>Harga</span>
               <span>Periode</span>
-              <span className="w-9"></span>
+              <span className="w-8"></span>
             </div>
             {processingCosts.map((cost) => (
               <div key={cost.id} className="flex items-center gap-2">
@@ -341,10 +341,10 @@ export function DerivedProductCalculator({ onAIAssist }: DerivedProductCalculato
                 <Button
                   type="button"
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   onClick={() => removeProcessingCost(cost.id)}
                   disabled={processingCosts.length === 1}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -372,12 +372,12 @@ export function DerivedProductCalculator({ onAIAssist }: DerivedProductCalculato
             </p>
           </div>
           <div className="space-y-2">
-            <div className="grid grid-cols-[1.5fr,0.8fr,0.6fr,1fr,auto] gap-2 text-xs font-medium text-muted-foreground px-1">
+            <div className="grid grid-cols-[1.5fr,0.8fr,0.6fr,1fr,32px] gap-2 text-xs font-medium text-muted-foreground px-1">
               <span>Nama Produk Jadi</span>
               <span>Qty</span>
               <span>Satuan</span>
               <span>Harga Jual / Satuan</span>
-              <span className="w-9"></span>
+              <span className="w-8"></span>
             </div>
             {derivedProducts.map((product) => (
               <div key={product.id} className="flex items-center gap-2">
@@ -422,10 +422,10 @@ export function DerivedProductCalculator({ onAIAssist }: DerivedProductCalculato
                 <Button
                   type="button"
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   onClick={() => removeDerivedProduct(product.id)}
                   disabled={derivedProducts.length === 1}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -445,20 +445,22 @@ export function DerivedProductCalculator({ onAIAssist }: DerivedProductCalculato
         </div>
 
         {/* Calculate Button */}
-        <Button
-          onClick={calculateHPP}
-          disabled={isLoading}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-        >
-          {isLoading ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-              Menghitung...
-            </>
-          ) : (
-            "Hitung HPP"
-          )}
-        </Button>
+        <div className="sticky bottom-16 z-40 bg-card/80 backdrop-blur-sm -mx-6 px-6 pb-6 pt-2 lg:static lg:bg-transparent lg:p-0 lg:m-0">
+          <Button
+            onClick={calculateHPP}
+            disabled={isLoading}
+            className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg lg:shadow-none"
+          >
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                Menghitung...
+              </>
+            ) : (
+              "Hitung HPP"
+            )}
+          </Button>
+        </div>
       </div>
 
       {/* Results Section */}
