@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Settings, Key, Sun, Moon, Monitor } from "lucide-react";
+import { Settings, Key, Sun, Moon, Monitor, User, Github, Facebook, Instagram } from "lucide-react";
 
 interface SettingsModalProps {
   open: boolean;
@@ -158,6 +158,46 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
           <Button onClick={handleSave} className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">
             Simpan & Gunakan
           </Button>
+        </div>
+
+        {/* Developer Info */}
+        <div className="space-y-3 border-t pt-4">
+          <Label className="flex items-center gap-2">
+            <User className="h-4 w-4" />
+            Developer
+          </Label>
+          <div className="flex flex-col items-center gap-2">
+            <p className="font-semibold text-sm">Ahmad Dzakiudin</p>
+            <div className="flex items-center gap-3">
+              <a
+                href="https://www.facebook.com/jakijekijuki"
+                target="_blank"
+                rel="noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook className="h-5 w-5" />
+              </a>
+              <a
+                href="https://www.instagram.com/jakijekiiii?igsh=MThpaW8ybThid3Zoaw%3D%3D"
+                target="_blank"
+                rel="noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a
+                href="https://github.com/Dzakiudin"
+                target="_blank"
+                rel="noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="GitHub"
+              >
+                <Github className="h-5 w-5" />
+              </a>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
