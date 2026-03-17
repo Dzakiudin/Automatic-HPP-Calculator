@@ -99,40 +99,32 @@ export function MainCalculator() {
 
     setIsAIAssistLoading(true);
     try {
-      const response = await fetch("/api/ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "ai-assist-input",
-          data: { productName, category, businessMode },
-        }),
-      });
+      const { getCostSuggestionsClient } = await import("@/lib/ai-client");
+      const suggestions = await getCostSuggestionsClient(productName, category || "Lainnya");
 
-      if (response.ok) {
-        const suggestions = await response.json();
+      if (suggestions) {
         setVariableCosts(suggestions.variableCosts);
         setFixedCosts(suggestions.fixedCosts);
-        if (suggestions.suggestedTargetSales) {
-          setTargetSalesPerMonth(suggestions.suggestedTargetSales);
-        }
         toast({
           title: "Berhasil",
           description: "AI telah mengisi komponen biaya yang disarankan",
         });
+      }
+    } catch (error: any) {
+      console.error("AI assist error:", error);
+      if (error?.message === "MISSING_API_KEY") {
+        toast({
+          title: "API Key Diperlukan",
+          description: "Silakan atur API Key Google Gemini Anda di menu Pengaturan.",
+          variant: "destructive",
+        });
       } else {
         toast({
           title: "Error",
-          description: "Gagal mendapatkan saran dari AI",
+          description: error?.message || "Gagal mendapatkan saran dari AI",
           variant: "destructive",
         });
       }
-    } catch (error) {
-      console.error("AI assist error:", error);
-      toast({
-        title: "Error",
-        description: "Terjadi kesalahan saat menghubungi AI",
-        variant: "destructive",
-      });
     } finally {
       setIsAIAssistLoading(false);
     }
@@ -178,22 +170,16 @@ export function MainCalculator() {
       setIsLoadingAI(true);
       try {
         const { getPriceRecommendationsClient } = await import("@/lib/ai-client");
-        const recommendationsArr = await getPriceRecommendationsClient(
+        const recommendations = await getPriceRecommendationsClient(
           productName,
           category || "Lainnya",
           hppPerProduct,
           targetSalesPerMonth
         );
 
-        if (recommendationsArr && recommendationsArr.length >= 3) {
-          const formattedRecs = {
-            competitive: recommendationsArr[0],
-            standard: recommendationsArr[1],
-            premium: recommendationsArr[2],
-          } as unknown as PriceRecommendation;
-
-          setAiRecommendations(formattedRecs);
-          setSelectedPrice(formattedRecs.standard.price);
+        if (recommendations) {
+          setAiRecommendations(recommendations as PriceRecommendation);
+          setSelectedPrice(recommendations.standard.price);
         }
       } catch (error: any) {
         console.error("AI recommendations error:", error);
@@ -230,17 +216,9 @@ export function MainCalculator() {
       const totalHPP = products.reduce((sum, p) => sum + p.hpp, 0);
 
       const recommendation = await getBundleRecommendationsClient(productName, category || "Lainnya", totalHPP);
-      // Since ai-client returns BundleRecommendation[] (max 3), let's map it back to the expected BundleRecommendation single obj shape.
-      // Wait, let's check what BundleRecommendation actually expects. 
-      // It expects { economyPack, balancedPack, profitMaxPack }. The client prompt returns array.
-      // We will adjust the AI-client prompt or map it here. Let's map it.
       
-      if (recommendation && recommendation.length >= 3) {
-        return {
-          economyPack: recommendation[0],
-          balancedPack: recommendation[1],
-          profitMaxPack: recommendation[2],
-        } as unknown as BundleRecommendation;
+      if (recommendation) {
+        return recommendation as BundleRecommendation;
       }
       return null;
 

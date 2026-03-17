@@ -29,7 +29,7 @@ export async function getPriceRecommendationsClient(
   category: string,
   hpp: number,
   targetSales: number | undefined
-): Promise<PriceRecommendation[]> {
+): Promise<PriceRecommendation> {
   const prompt = `
   Anda adalah konsultan harga ahli untuk UMKM di Indonesia.
   Berdasarkan data produk berikut:
@@ -39,21 +39,24 @@ export async function getPriceRecommendationsClient(
   - Target Penjualan: ${targetSales ? `${targetSales} unit/bulan` : "Tidak ditentukan"}
 
   Berikan rekomendasi harga jual dalam 3 kategori:
-  1. "Agresif" (Margin kecil, volume besar, penetrasi pasar)
-  2. "Moderat" (Margin menengah, standar industri)
-  3. "Premium" (Margin tinggi, butuh value-added/branding kuat)
+  1. "competitive" (Agresif/Margin kecil)
+  2. "standard" (Moderat/Margin menengah)
+  3. "premium" (Premium/Margin tinggi)
 
-  Format response harus STRICTLY JSON array dengan format berikut:
-  [
-    {
-      "strategy": "Agresif | Moderat | Premium",
-      "suggestedPrice": number (harga bulat, misal 15000),
-      "margin": number (persentase margin dari HPP),
-      "reasoning": "Penjelasan singkat alasan harga ini",
-      "targetMarket": "Siapa target pasar yang cocok"
-    }
-  ]
-  Return HANYA JSON array, tanpa markdown block (\`\`\`json) atau teks lain.
+  Format response harus STRICTLY JSON object dengan format berikut:
+  {
+    "competitive": { "price": number, "profit": number, "margin": number, "description": string },
+    "standard": { "price": number, "profit": number, "margin": number, "description": string },
+    "premium": { "price": number, "profit": number, "margin": number, "description": string }
+  }
+  
+  Setiap objek harus berisi:
+  - price: harga jual bulat (contoh: 15000)
+  - profit: nilai keuntungan per produk (price - HPP)
+  - margin: persentase margin laba dari harga jual
+  - description: alasan singkat harga ini dan target pasarnya
+  
+  Return HANYA JSON object, tanpa markdown block (\`\`\`json) atau teks lain.
   `;
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
@@ -65,7 +68,7 @@ export async function getPriceRecommendationsClient(
 
       // Bersihkan response dari markdown wrap ```json dan whitespace
       const cleanedJson = responseText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-      return JSON.parse(cleanedJson) as PriceRecommendation[];
+      return JSON.parse(cleanedJson) as PriceRecommendation;
     } catch (error: any) {
       if (error?.message === "MISSING_API_KEY") {
         throw error;
@@ -89,7 +92,7 @@ export async function getBundleRecommendationsClient(
   productName: string,
   category: string,
   hpp: number
-): Promise<BundleRecommendation[]> {
+): Promise<BundleRecommendation> {
   const prompt = `
   Sebagai konsultan bisnis F&B dan retail, berikan 3 ide paket bundling yang menarik
   untuk meningkatkan nilai transaksi (Average Order Value) untuk produk ini:
@@ -99,28 +102,25 @@ export async function getBundleRecommendationsClient(
   HPP Produk Utama: Rp ${hpp}
 
   Berikan 3 jenis paket bundling:
-  1. "Paket Ekonomis" (Bundling dengan produk pelengkap murah, margin tipis-sedang)
-  2. "Paket Populer" (Bundling standar untuk sehari-hari/umum, margin sedang)
-  3. "Paket Premium/Keluarga" (Bundling ukuran besar atau paket lengkap, margin tinggi)
+  1. "economyPack" (Paket Ekonomis)
+  2. "balancedPack" (Paket Populer)
+  3. "profitMaxPack" (Paket Premium)
 
-  Beri ide kreatif untuk item pelengkapnya (item2Name, item3Name dll).
-  Beri estimasi HPP bundling secara realistis (hpp produk utama + estimasi hpp item pelengkap).
-  Berikan saran harga jual paket (suggestedPrice) yang lebih murah daripada beli satuan tapi tetap profit.
+  Format response harus STRICTLY JSON object dengan format berikut:
+  {
+    "economyPack": { "price": number, "discount": number, "profit": number, "margin": number, "description": string },
+    "balancedPack": { "price": number, "discount": number, "profit": number, "margin": number, "description": string },
+    "profitMaxPack": { "price": number, "discount": number, "profit": number, "margin": number, "description": string }
+  }
 
-  Format response harus STRICTLY JSON array dengan format berikut:
-  [
-    {
-      "name": "Nama Paket Kreatif",
-      "description": "Deskripsi singkat isi paket",
-      "items": [
-        { "name": "Nama Produk Utama", "quantity": 1 },
-        { "name": "Nama Produk Pelengkap 1", "quantity": 1 }
-      ],
-      "estimatedTotalHPP": number (total hpp keseluruhan),
-      "suggestedPrice": number (harga jual yang disarankan)
-    }
-  ]
-  Return HANYA JSON array, tanpa markdown block.
+  Setiap objek harus berisi:
+  - price: harga jual paket yang sudah didiskon
+  - discount: nominal potongan harga dari total harga normal
+  - profit: keuntungan bersih dari paket (price - estimasi total HPP)
+  - margin: persentase margin dari harga jual paket
+  - description: ide nama paket kreatif dan penjelasan isinya
+
+  Return HANYA JSON object, tanpa markdown block.
   `;
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
@@ -131,7 +131,7 @@ export async function getBundleRecommendationsClient(
       const responseText = result.response.text();
 
       const cleanedJson = responseText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-      return JSON.parse(cleanedJson) as BundleRecommendation[];
+      return JSON.parse(cleanedJson) as BundleRecommendation;
     } catch (error: any) {
       if (error?.message === "MISSING_API_KEY") {
         throw error;
