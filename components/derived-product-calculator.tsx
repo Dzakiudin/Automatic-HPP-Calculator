@@ -127,8 +127,17 @@ export function DerivedProductCalculator({ onAIAssist }: DerivedProductCalculato
         return sum;
       }, 0);
 
+      // Calculate per-unit processing costs
+      const totalDerivedQuantity = derivedProducts.reduce((sum, p) => sum + p.quantity, 0);
+      const totalPerUnitCosts = processingCosts.reduce((sum, cost) => {
+        if (cost.period === "per-unit") {
+          return sum + (cost.amount * totalDerivedQuantity);
+        }
+        return sum;
+      }, 0);
+
       // Total production cost per batch
-      const totalProductionCost = rawMaterial.totalCost + totalProcessingPerBatch;
+      const totalProductionCost = rawMaterial.totalCost + totalProcessingPerBatch + totalPerUnitCosts;
 
       // Calculate total potential sales
       const totalPotentialSales = derivedProducts.reduce(

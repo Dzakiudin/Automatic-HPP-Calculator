@@ -20,6 +20,17 @@ export function getCalculations(): HPPCalculation[] {
   }
 }
 
+export function deleteCalculation(id: string): void {
+  if (typeof window === 'undefined') return;
+  const existing = getCalculations().filter((calc) => calc.id !== id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+}
+
+export function deleteAllCalculations(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(STORAGE_KEY);
+}
+
 export function saveDerivedCalculation(calculation: DerivedProductCalculation): void {
   if (typeof window === 'undefined') return;
   const existing = getDerivedCalculations();
@@ -37,6 +48,17 @@ export function getDerivedCalculations(): DerivedProductCalculation[] {
   }
 }
 
+export function deleteDerivedCalculation(id: string): void {
+  if (typeof window === 'undefined') return;
+  const existing = getDerivedCalculations().filter((calc) => calc.id !== id);
+  localStorage.setItem(DERIVED_STORAGE_KEY, JSON.stringify(existing));
+}
+
+export function deleteAllDerivedCalculations(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(DERIVED_STORAGE_KEY);
+}
+
 export function formatRupiah(amount: number): string {
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -49,3 +71,4 @@ export function formatRupiah(amount: number): string {
 export function parseRupiah(value: string): number {
   return Number(value.replace(/[^0-9]/g, '')) || 0;
 }
+

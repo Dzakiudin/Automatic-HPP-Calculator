@@ -1,12 +1,29 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY || "AIzaSyCFoo9kVBXrWfa0JgLqdSWkUoDTQ-9Av_w");
+function parseJsonFromAI(text: string): unknown | null {
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) return null;
+  try {
+    return JSON.parse(jsonMatch[0]);
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(request: Request) {
   try {
+    const apiKey = process.env.GOOGLE_AI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "API key belum dikonfigurasi. Tambahkan GOOGLE_AI_API_KEY di file .env.local" },
+        { status: 503 }
+      );
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
     const { action, data } = await request.json();
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     if (action === "price-recommendations") {
       const { productName, category, hpp, businessMode } = data;
@@ -44,17 +61,12 @@ Berikan 3 tingkatan harga dalam format JSON (tanpa markdown code block):
 Pastikan harga dibulatkan ke ratusan atau ribuan terdekat yang masuk akal untuk produk Indonesia.`;
 
       const result = await model.generateContent(prompt);
-      const response = result.response;
-      const text = response.text();
-      
-      // Parse JSON from response
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const recommendations = JSON.parse(jsonMatch[0]);
+      const text = result.response.text();
+      const recommendations = parseJsonFromAI(text);
+      if (recommendations) {
         return NextResponse.json(recommendations);
       }
-      
-      return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 });
+      return NextResponse.json({ error: "Gagal memproses respons AI" }, { status: 500 });
     }
 
     if (action === "bundle-recommendations") {
@@ -100,16 +112,12 @@ Berikan 3 opsi paket bundling dalam format JSON (tanpa markdown code block):
 Pastikan semua harga bundling lebih rendah dari total harga normal dan profit tetap positif.`;
 
       const result = await model.generateContent(prompt);
-      const response = result.response;
-      const text = response.text();
-      
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const recommendations = JSON.parse(jsonMatch[0]);
+      const text = result.response.text();
+      const recommendations = parseJsonFromAI(text);
+      if (recommendations) {
         return NextResponse.json(recommendations);
       }
-      
-      return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 });
+      return NextResponse.json({ error: "Gagal memproses respons AI" }, { status: 500 });
     }
 
     if (action === "derived-product-suggestions") {
@@ -134,25 +142,20 @@ Berikan dalam format JSON (tanpa markdown code block):
 Gunakan data realistis untuk industri pengolahan di Indonesia.`;
 
       const result = await model.generateContent(prompt);
-      const response = result.response;
-      const text = response.text();
-      
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const suggestions = JSON.parse(jsonMatch[0]);
-        // Generate proper UUIDs
-        suggestions.processingCosts = suggestions.processingCosts.map((cost: { name: string; amount: number; period: string }) => ({
+      const text = result.response.text();
+      const suggestions = parseJsonFromAI(text) as { processingCosts?: { name: string; amount: number; period: string }[]; products?: { name: string; quantity: number; unit: string; sellingPrice: number }[] } | null;
+      if (suggestions?.processingCosts && suggestions?.products) {
+        suggestions.processingCosts = suggestions.processingCosts.map((cost) => ({
           ...cost,
           id: crypto.randomUUID(),
         }));
-        suggestions.products = suggestions.products.map((product: { name: string; quantity: number; unit: string; sellingPrice: number }) => ({
+        suggestions.products = suggestions.products.map((product) => ({
           ...product,
           id: crypto.randomUUID(),
         }));
         return NextResponse.json(suggestions);
       }
-      
-      return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 });
+      return NextResponse.json({ error: "Gagal memproses respons AI" }, { status: 500 });
     }
 
     if (action === "ai-assist-input") {
@@ -181,25 +184,20 @@ Berikan dalam format JSON (tanpa markdown code block):
 Gunakan data realistis untuk bisnis kecil-menengah di Indonesia.`;
 
       const result = await model.generateContent(prompt);
-      const response = result.response;
-      const text = response.text();
-      
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const suggestions = JSON.parse(jsonMatch[0]);
-        // Generate proper UUIDs
-        suggestions.variableCosts = suggestions.variableCosts.map((cost: { name: string; amount: number }) => ({
+      const text = result.response.text();
+      const suggestions = parseJsonFromAI(text) as { variableCosts?: { name: string; amount: number }[]; fixedCosts?: { name: string; monthlyAmount: number; allocationPerProduct: number }[]; suggestedTargetSales?: number } | null;
+      if (suggestions?.variableCosts && suggestions?.fixedCosts) {
+        suggestions.variableCosts = suggestions.variableCosts.map((cost) => ({
           ...cost,
           id: crypto.randomUUID(),
         }));
-        suggestions.fixedCosts = suggestions.fixedCosts.map((cost: { name: string; monthlyAmount: number; allocationPerProduct: number }) => ({
+        suggestions.fixedCosts = suggestions.fixedCosts.map((cost) => ({
           ...cost,
           id: crypto.randomUUID(),
         }));
         return NextResponse.json(suggestions);
       }
-      
-      return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 });
+      return NextResponse.json({ error: "Gagal memproses respons AI" }, { status: 500 });
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });

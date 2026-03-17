@@ -145,7 +145,12 @@ export function MainCalculator() {
     setTimeout(async () => {
       const totalVariableCost = variableCosts.reduce((sum, cost) => sum + cost.amount, 0);
       const totalFixedCostAllocation = fixedCosts.reduce(
-        (sum, cost) => sum + (cost.allocationPerProduct || Math.ceil(cost.monthlyAmount / targetSalesPerMonth)),
+        (sum, cost) => {
+          const allocation = cost.allocationPerProduct > 0
+            ? cost.allocationPerProduct
+            : (targetSalesPerMonth > 0 ? Math.ceil(cost.monthlyAmount / targetSalesPerMonth) : 0);
+          return sum + allocation;
+        },
         0
       );
       const hppPerProduct = totalVariableCost + totalFixedCostAllocation;

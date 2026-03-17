@@ -7,9 +7,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { getCalculations, getDerivedCalculations, formatRupiah } from "@/lib/store";
+import { Button } from "@/components/ui/button";
+import {
+  getCalculations,
+  getDerivedCalculations,
+  deleteCalculation,
+  deleteAllCalculations,
+  deleteDerivedCalculation,
+  deleteAllDerivedCalculations,
+  formatRupiah,
+} from "@/lib/store";
 import type { HPPCalculation, DerivedProductCalculation } from "@/lib/types";
-import { History, FileText, Recycle } from "lucide-react";
+import { History, FileText, Recycle, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface HistoryModalProps {
@@ -21,12 +30,36 @@ export function HistoryModal({ open, onOpenChange }: HistoryModalProps) {
   const [calculations, setCalculations] = useState<HPPCalculation[]>([]);
   const [derivedCalculations, setDerivedCalculations] = useState<DerivedProductCalculation[]>([]);
 
+  const loadData = () => {
+    setCalculations(getCalculations());
+    setDerivedCalculations(getDerivedCalculations());
+  };
+
   useEffect(() => {
     if (open) {
-      setCalculations(getCalculations());
-      setDerivedCalculations(getDerivedCalculations());
+      loadData();
     }
   }, [open]);
+
+  const handleDelete = (id: string) => {
+    deleteCalculation(id);
+    loadData();
+  };
+
+  const handleDeleteAll = () => {
+    deleteAllCalculations();
+    loadData();
+  };
+
+  const handleDeleteDerived = (id: string) => {
+    deleteDerivedCalculation(id);
+    loadData();
+  };
+
+  const handleDeleteAllDerived = () => {
+    deleteAllDerivedCalculations();
+    loadData();
+  };
 
   const formatDate = (date: Date | string) => {
     const d = new Date(date);
@@ -68,6 +101,17 @@ export function HistoryModal({ open, onOpenChange }: HistoryModalProps) {
               </div>
             ) : (
               <div className="space-y-3">
+                <div className="flex justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleDeleteAll}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Hapus Semua
+                  </Button>
+                </div>
                 {calculations.map((calc) => (
                   <div key={calc.id} className="bg-muted/50 rounded-lg p-4">
                     <div className="flex items-start justify-between">
@@ -75,9 +119,19 @@ export function HistoryModal({ open, onOpenChange }: HistoryModalProps) {
                         <h4 className="font-semibold">{calc.productName}</h4>
                         <p className="text-xs text-muted-foreground">{calc.category}</p>
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        {formatDate(calc.createdAt)}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">
+                          {formatDate(calc.createdAt)}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(calc.id)}
+                          className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
                     </div>
                     <div className="mt-2 grid grid-cols-3 gap-4 text-sm">
                       <div>
@@ -108,6 +162,17 @@ export function HistoryModal({ open, onOpenChange }: HistoryModalProps) {
               </div>
             ) : (
               <div className="space-y-3">
+                <div className="flex justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleDeleteAllDerived}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Hapus Semua
+                  </Button>
+                </div>
                 {derivedCalculations.map((calc) => (
                   <div key={calc.id} className="bg-muted/50 rounded-lg p-4">
                     <div className="flex items-start justify-between">
@@ -117,9 +182,19 @@ export function HistoryModal({ open, onOpenChange }: HistoryModalProps) {
                           {calc.rawMaterial.name} - {calc.rawMaterial.quantity} {calc.rawMaterial.unit}
                         </p>
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        {formatDate(calc.createdAt)}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">
+                          {formatDate(calc.createdAt)}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteDerived(calc.id)}
+                          className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
                     </div>
                     <div className="mt-2 grid grid-cols-3 gap-4 text-sm">
                       <div>
@@ -160,3 +235,4 @@ export function HistoryModal({ open, onOpenChange }: HistoryModalProps) {
     </Dialog>
   );
 }
+
