@@ -4,6 +4,15 @@
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/dzakiudins-projects/v0-automatic-hpp-calculator)
 [![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/sSdTh694sId)
+---
+
+## 📸 Penampakan App (Biar Percaya)
+<div align="center">
+  <img src="docs/Screenshot%202026-03-17%20175222.png" width="350px" />
+  <img src="docs/Screenshot%202026-03-17%20175243.png" width="350px" />
+  <img src="docs/Screenshot%202026-03-17%20175252.png" width="350px" />
+  <img src="docs/Screenshot%202026-03-17%20175313.png" width="350px" />
+</div>
 
 ---
 
