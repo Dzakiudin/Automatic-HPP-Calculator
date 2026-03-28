@@ -17,7 +17,15 @@ function getGenAIClient(): GoogleGenerativeAI {
   if (typeof window === 'undefined') {
     throw new Error("Cannot instantiate GenAI from server");
   }
-  const apiKey = localStorage.getItem("GEMINI_API_KEY");
+  
+  // Try localStorage first (user-provided key)
+  let apiKey = localStorage.getItem("GEMINI_API_KEY");
+  
+  // Fallback to environment variable if not in localStorage
+  if (!apiKey || apiKey.trim() === "") {
+    apiKey = process.env.NEXT_PUBLIC_GOOGLE_AI_API_KEY || null;
+  }
+
   if (!apiKey) {
     throw new Error("MISSING_API_KEY");
   }
