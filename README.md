@@ -1,12 +1,12 @@
-# 🧮 Automatic HPP Calculator: Solusi Biar Gak Boncos!
+# 🧮 Automatic HPP Calculator
 
-> *"Capek itung HPP manual sampe tipes? Tenang, masbro. Aplikasi ini hadir biar idup lu agak ringan dikit, gak pusing tujuh keliling cuma gara-gara salah naruh koma di Excel."*
+A comprehensive, AI-powered solution to automate and simplify the calculation of Harga Pokok Penjualan (HPP) / Cost of Goods Sold (COGS).
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/dzakiudins-projects/v0-automatic-hpp-calculator)
 [![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/sSdTh694sId)
 ---
 
-## 📸 Penampakan App (Biar Percaya)
+## 📸 Application Previews
 <div align="center">
   <img src="docs/Screenshot%202026-03-17%20175222.png" width="350px" />
   <img src="docs/Screenshot%202026-03-17%20175243.png" width="350px" />
@@ -16,71 +16,69 @@
 
 ---
 
-## 🧐 Apaan nih?
-Ini adalah **Automatic HPP (Harga Pokok Penjualan) Calculator**. Dibikin khusus buat lu para pejuang cuan yang pengen serius bisnis tapi males berurusan sama rumus Excel yang ribetnya minta ampun. 
+## 🧐 About the Project
+**Automatic HPP Calculator** is an application specifically designed for business owners and entrepreneurs to streamline the process of calculating production costs. By automating complex calculations, this tool minimizes human error and saves valuable time, allowing you to focus on scaling and growing your business operations.
 
-Intinya: tinggal masukin bahan, sat-set-sat-set, keluar harganya. Biar lu bisa fokus cari *customer*, bukan fokus liatin kalkulator sampe mata juling.
+## ✨ Key Features
+*   **AI-Powered Insights**: Integrates with Gemini AI to provide intelligent assistance and predictive insights regarding ingredient costs and pricing strategies.
+*   **Derived Product Calculator**: Supports complex, multi-tiered calculations for derived products or sub-components, adapting to fluctuating raw material prices seamlessly.
+*   **Mobile-Ready & Cross-Platform**: Built with **Capacitor**, enabling fluid usage across web, Android, and iOS devices. Check your HPP anytime, anywhere.
+*   **Modern User Interface**: Designed with Shadcn/UI for a clean, intuitive, and professional enterprise-grade visual experience.
+*   **Dynamic Settings Management**: Easily configure application preferences and AI models directly through the user interface without modifying the source code.
 
-## ✨ Fitur-Fitur "Sakti"
-*   **AI-Powered Magic**: Pake Gemini AI biar lu ngerasa punya asisten pribadi yang pinter (walaupun asistennya cuma barisan kode, tapi ya lumayanlah daripada gak ada yang bantuin).
-*   **Derived Product Calculator**: Buat lu yang jualan barang turunan (misal: jualan sambel tapi modalnya dari cabe yang harganya naik turun kayak mood mantan), kita udah mikirin sampe situ.
-*   **Mobile Ready**: Berkat **Capacitor**, aplikasi ini bisa lu bawa-bawa di kantong. Cocok buat ngecek harga pas lagi nongkrong di warkop atau lagi nego sama suplier.
-*   **UI/UX Glowing**: Pake Shadcn/UI biar tampilannya mewah, gak malu-maluin pas dipamerin ke investor (atau ke temen tongkrongan).
-*   **Settings Modal**: Bisa ganti-ganti config tanpa perlu bongkar kode. Lu bukan hacker, kan? Pake UI aja udah cukup.
+## 🛠️ Technology Stack
+Built utilizing modern, high-performance technologies:
+*   **Framework**: [Next.js 15+](https://nextjs.org/) for fast, optimized, and scalable web rendering.
+*   **AI Integration**: [Google Gemini Pro](https://deepmind.google/technologies/gemini/) for advanced data processing and analysis.
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [Shadcn/UI](https://ui.shadcn.com/) for a modular and responsive design system.
+*   **Mobile Bridge**: [Capacitor](https://capacitorjs.com/) to compile the web application into native mobile builds.
+*   **State Management**: React Hooks and custom stores to handle complex state management securely.
 
-## 🛠️ Jeroannya (Tech Stack)
-Gak cuma modal casing cakep, jeroannya pake teknologi yang gak kaleng-kaleng:
-*   **Framework**: [Next.js 15+](https://nextjs.org/) (Biar performanya kenceng, gak pake buffering-buffering club).
-*   **Otak AI**: [Google Gemini Pro](https://deepmind.google/technologies/gemini/) (Otomatis pinter tanpa perlu ikut bimbel).
-*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [Shadcn/UI](https://ui.shadcn.com/) (Biar tampilan rapih tanpa harus kursus desain interior).
-*   **Mobile Bridge**: [Capacitor](https://capacitorjs.com/) (Biar bisa jadi APK, bukan cuma jadi impian).
-*   **State Management**: React Hooks & Store custom (Biar gak amnesia pas lu pindah-pindah tab).
+## 🚀 Getting Started
 
-## 🚀 Cara Pake (Gak Pake Iklan)
+Follow the instructions below to run the project locally:
 
-Kalo lu pengen oprek sendiri di lokal:
-
-1.  **Clone dulu repository-nya:**
+1.  **Clone the repository:**
     ```bash
     git clone https://github.com/Dzakiudin/Automatic-HPP-Calculator.git
     cd Automatic-HPP-Calculator
     ```
 
-2.  **Install segala rupa bumbunya:**
+2.  **Install dependencies:**
     ```bash
     npm install
-    # atau kalo lu tim pnpm biar lebih 'lite'
+    # or using pnpm
     pnpm install
     ```
 
-3.  **Setup ENV (Penting banget, jangan dilewati!):**
-    Bikin file `.env.local` di root folder, terus isi API Key Gemini lu. Jangan dipajang di status WhatsApp, ntar dikerjain orang.
+3.  **Environment Setup:**
+    Create a `.env.local` file in the root directory and configure your Gemini API Key securely.
     ```env
     NEXT_PUBLIC_GEMINI_API_KEY=your_key_here
     ```
 
-4.  **Nyalain mesinnya:**
+4.  **Run the development server:**
     ```bash
     npm run dev
     ```
-    Terus buka `http://localhost:3000` di browser kesayangan lu.
+    Open `http://localhost:3000` in your preferred web browser to view the application.
 
-## 📱 Mau dibungkus jadi APK?
-Udah disediain Capacitor-nya, tinggal jalanin ritual:
+## 📱 Mobile Build (Android/iOS)
+The application is pre-configured with Capacitor for native deployment. Run the following commands:
 ```bash
 npx cap add android
-npx cap copy
+npx cap sync
 npx cap open android
 ```
-Ntar langsung kebuka di Android Studio. Lu tinggal klik 'Run', terus jadi deh aplikasinya. Mantap kan?
+This will open the project in your native IDE (e.g., Android Studio), where you can easily build and generate your APK/AAB files.
 
 ---
 
-## 🤝 Kontribusi
-Punya ide gila biar aplikasi ini makin sakti? Atau nemu bug yang bikin emosi? Silakan buka *Pull Request*. Kita terima dengan tangan terbuka, asal jangan naruh script buat nambang crypto aja di dalemnya ya.
+## 🤝 Contributing
+We welcome contributions to improve the application. Please feel free to open a Pull Request or report bugs in the Issues section. Ensure your code adheres to standard styling and best practices.
 
 ## 🛡️ License
-Suka-suka lu dah, yang penting berkah buat semua. 
+This project is open-source and available under the MIT License.
 
 ---
-*Dibuat dengan ❤️, ☕, dan sedikit rasa takut pas denger harga bahan baku naik lagi.*
+*Developed with dedication to simplify business operations and empower modern enterprises.*
