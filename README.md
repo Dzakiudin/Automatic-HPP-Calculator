@@ -8,6 +8,7 @@ A comprehensive, AI-powered solution to automate and simplify the calculation of
 
 ## 📸 Application Previews
 <div align="center">
+  <img src="docs/Gradient%20Mobile%20Application.jpg" width="350px" />
   <img src="docs/Screenshot%202026-03-17%20175222.png" width="350px" />
   <img src="docs/Screenshot%202026-03-17%20175243.png" width="350px" />
   <img src="docs/Screenshot%202026-03-17%20175252.png" width="350px" />
@@ -81,4 +82,4 @@ We welcome contributions to improve the application. Please feel free to open a 
 This project is open-source and available under the MIT License.
 
 ---
-*Developed with dedication to simplify business operations and empower modern enterprises.*
+*Developed with dedication to simplify business operations and empower modern enterprises.*
