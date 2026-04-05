@@ -8,11 +8,14 @@ A comprehensive, AI-powered solution to automate and simplify the calculation of
 
 ## 📸 Application Previews
 <div align="center">
-  <img src="docs/Gradient%20Mobile%20Application.jpg" width="350px" />
-  <img src="docs/Screenshot%202026-03-17%20175222.png" width="350px" />
-  <img src="docs/Screenshot%202026-03-17%20175243.png" width="350px" />
-  <img src="docs/Screenshot%202026-03-17%20175252.png" width="350px" />
-  <img src="docs/Screenshot%202026-03-17%20175313.png" width="350px" />
+  <img src="docs/Gradient%20Mobile%20Application.jpg" width="700px" />
+</div>
+<br>
+<div align="center">
+  <img src="docs/Screenshot%202026-03-17%20175222.png" width="200px" />
+  <img src="docs/Screenshot%202026-03-17%20175243.png" width="200px" />
+  <img src="docs/Screenshot%202026-03-17%20175252.png" width="200px" />
+  <img src="docs/Screenshot%202026-03-17%20175313.png" width="200px" />
 </div>
 
 ---
